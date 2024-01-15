@@ -16,7 +16,7 @@ class Database {
       mongoose.set("debug", { color: true });
     }
     mongoose
-      .connect(connectString)
+      .connect(connectString, { maxPoolSize: 100 })
       .then((_) => console.log("Connected To Mongodb Singleton"))
       .catch((err) => console.log(err));
   }

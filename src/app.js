@@ -18,7 +18,7 @@ app.use(compression());
 require("./dbs/init.mongoose");
 const { countConnect, checkOverLoad } = require("./helper/check.connection");
 countConnect();
-// checkOverLoad();
+checkOverLoad();
 
 // init routes
 app.get("/", (req, res, next) => {
