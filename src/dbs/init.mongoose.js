@@ -2,7 +2,9 @@
 // sử dụng single ton để kết nói db
 // => ưu điểm là sẽ tạo duy nhất một kết nói tránh trường hợp tạo nhiều kết nối mới gây quá tải connect db
 const mongoose = require("mongoose");
-const connectString = "mongodb://localhost:27017/ShopDev";
+const config = require("../configs/config.mongodb");
+const { host, name, port } = config.db;
+const connectString = `mongodb://${host}:${port}/${name}`;
 
 class Database {
   constructor() {
@@ -17,7 +19,7 @@ class Database {
     }
     mongoose
       .connect(connectString, { maxPoolSize: 100 })
-      .then((_) => console.log("Connected To Mongodb Singleton"))
+      .then((_) => console.log("Connected To Mongodb Singleton", connectString))
       .catch((err) => console.log(err));
   }
   static getInstance() {
