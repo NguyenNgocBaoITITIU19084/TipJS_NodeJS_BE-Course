@@ -15,7 +15,10 @@ app.use(helmet());
 app.use(compression());
 
 // init db
-require("./dbs/init.mongoose.lv0");
+require("./dbs/init.mongoose");
+const { countConnect, checkOverLoad } = require("./helper/check.connection");
+countConnect();
+// checkOverLoad();
 
 // init routes
 app.get("/", (req, res, next) => {

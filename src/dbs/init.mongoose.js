@@ -17,7 +17,7 @@ class Database {
     }
     mongoose
       .connect(connectString)
-      .then((_) => console.log("Connected To Mongodb"))
+      .then((_) => console.log("Connected To Mongodb Singleton"))
       .catch((err) => console.log(err));
   }
   static getInstance() {
