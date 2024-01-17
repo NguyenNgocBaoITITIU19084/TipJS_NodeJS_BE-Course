@@ -5,7 +5,6 @@ const { default: helmet } = require("helmet");
 const morgan = require("morgan");
 
 const app = express();
-console.log("process", process.env.NODE_ENV);
 
 // init middlewares
 app.use(morgan("dev"));
@@ -15,17 +14,21 @@ app.use(morgan("dev"));
 // app.use(morgan("tiny"));
 app.use(helmet());
 app.use(compression());
+app.use(express.json());
+app.unsubscribe(
+  express.urlencoded({
+    extended: true,
+  })
+);
 
 // init db
 require("./dbs/init.mongoose");
 const { countConnect, checkOverLoad } = require("./helper/check.connection");
-countConnect();
-checkOverLoad();
+// countConnect();
+// checkOverLoad();
 
 // init routes
-app.get("/", (req, res, next) => {
-  return res.status(200).json({ message: "welcome Fantips" });
-});
+app.use("/", require("./routes/index"));
 
 // handling errors
 
