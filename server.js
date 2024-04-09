@@ -1,9 +1,12 @@
 const app = require("./src/app");
 
-const PORT = process.env.PORT || 3000;
+const config = require("./src/configs/config.mongodb");
+
+const PORT = config.app.port || 3000;
 
 const server = app.listen(PORT, () => {
-  console.log(`WSV eCommerce start with ${PORT}`);
+  console.log(`server is running on ENV:: ${process.env.NODE_ENV}`);
+  console.log(`server is running on PORT:: ${PORT}`);
 });
 
 process.on("SIGINT", () => {
