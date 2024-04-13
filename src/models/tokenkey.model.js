@@ -15,9 +15,17 @@ var keySchema = new Schema(
       type: String,
       required: true,
     },
-    refeshToken: {
+    privateKey: {
+      type: String,
+      required: true,
+    },
+    refeshTokensUsed: {
       type: Array,
       default: [],
+    },
+    refeshToken: {
+      type: String,
+      required: true,
     },
   },
   {

@@ -4,13 +4,54 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 
 const shopModel = require("../models/shop.model");
-const KeyService = require("./key.service");
 const { ROLE } = require("../contants/roles.contant");
-const { createTokenPair } = require("../auth/authUtils");
-const { getInfoData } = require("../utils");
-const { BadRequestError } = require("../core/error.response");
+const { createTokensPair, createTokenPairRSA } = require("../auth/authUtils");
+const { getInfoData, generateKeyPair } = require("../utils");
+const {
+  BadRequestError,
+  UnAuthorizedError,
+} = require("../core/error.response");
+
+// Services
+const KeyService = require("./key.service");
+const { findByEmail } = require("../services/shop.service");
 
 class AccessService {
+  /*
+    Flow of Login Function:
+      1 - checking email in db 
+      2 - matching password
+      3 - create AT , RT
+      4 - return data
+  */
+  static login = async ({ email, password, refeshToken = null }) => {
+    const foundedShop = await findByEmail({ email });
+    if (!foundedShop) throw new BadRequestError("Shop is not registed");
+
+    const matchedPassword = bcrypt.compareSync(password, foundedShop.password);
+    if (!matchedPassword) throw new UnAuthorizedError("Authorized Error");
+
+    const { publicKey, privateKey } = generateKeyPair();
+    console.log({ publicKey, privateKey });
+
+    const tokens = await createTokensPair(
+      { userId: foundedShop._id },
+      publicKey,
+      privateKey
+    );
+    await KeyService.createKey({
+      userId: foundedShop._id,
+      publicKey,
+      privateKey,
+      refeshToken: tokens.refeshToken,
+    });
+    console.log(tokens);
+    return {
+      shop: getInfoData({ fields: ["name", "email"], object: foundedShop }),
+      tokens,
+    };
+  };
+
   static signUp = async ({ name, email, password }) => {
     const holderShop = await shopModel.findOne({ email }).lean();
     if (holderShop) {
@@ -32,7 +73,7 @@ class AccessService {
       });
 
       console.log(privateKey, publicKey);
-      const publicKeyString = await KeyService.createKey({
+      const publicKeyString = await KeyService.createKeyRSA({
         userId: newShop._id,
         publicKey,
       });
@@ -47,7 +88,7 @@ class AccessService {
       const publicKeyObject = crypto.createPublicKey(publicKeyString);
       console.log("publicKeyObject", publicKeyObject);
       //create token pair
-      const tokens = await createTokenPair(
+      const tokens = await createTokenPairRSA(
         { userId: newShop._id, email },
         publicKeyObject,
         privateKey

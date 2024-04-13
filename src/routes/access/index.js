@@ -8,6 +8,8 @@ const router = express.Router();
 
 router.post("/shop/signup", asyncHandler(accessController.signUp));
 
+router.get("/shop/login", asyncHandler(accessController.login));
+
 router.get(
   "/test",
   asyncHandler((req, res) => {
