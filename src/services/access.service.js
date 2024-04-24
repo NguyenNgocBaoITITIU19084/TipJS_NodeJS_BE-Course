@@ -5,8 +5,8 @@ const crypto = require("crypto");
 
 const shopModel = require("../models/shop.model");
 const { ROLE } = require("../contants/roles.contant");
-const { createTokensPair, createTokenPairRSA } = require("../auth/authUtils");
-const { getInfoData, generateKeyPair } = require("../utils");
+const { createTokenPairRSA, createTokensPair } = require("../auth/authUtils");
+const { getInfoData, generateKeyPair } = require("../utils/index");
 const {
   BadRequestError,
   UnAuthorizedError,
@@ -66,36 +66,54 @@ class AccessService {
     });
     if (newShop) {
       //created privateKey, publicKey
-      const { privateKey, publicKey } = crypto.generateKeyPairSync("rsa", {
-        modulusLength: 4096,
-        publicKeyEncoding: { type: "pkcs1", format: "pem" },
-        privateKeyEncoding: { type: "pkcs1", format: "pem" },
-      });
+      // const { privateKey, publicKey } = crypto.generateKeyPairSync("rsa", {
+      //   modulusLength: 4096,
+      //   publicKeyEncoding: { type: "pkcs1", format: "pem" },
+      //   privateKeyEncoding: { type: "pkcs1", format: "pem" },
+      // });
 
-      console.log(privateKey, publicKey);
-      const publicKeyString = await KeyService.createKeyRSA({
-        userId: newShop._id,
-        publicKey,
-      });
+      // console.log(privateKey, publicKey);
+      // const publicKeyString = await KeyService.createKeyRSA({
+      //   userId: newShop._id,
+      //   publicKey,
+      // });
 
-      console.log("publicKeyString", publicKeyString);
+      // console.log("publicKeyString", publicKeyString);
 
-      if (!publicKeyString) {
-        return {
-          code: "xxx",
-          message: "publicKeyString error",
-        };
-      }
+      // if (!publicKeyString) {
+      //   return {
+      //     code: "xxx",
+      //     message: "publicKeyString error",
+      //   };
+      // }
 
-      const publicKeyObject = crypto.createPublicKey(publicKeyString);
-      console.log("publicKeyObject", publicKeyObject);
-      //create token pair
-      const tokens = await createTokenPairRSA(
+      // const publicKeyObject = crypto.createPublicKey(publicKeyString);
+      // console.log("publicKeyObject", publicKeyObject);
+      // //create token pair
+      // const tokens = await createTokenPairRSA(
+      //   { userId: newShop._id, email },
+      //   publicKeyObject,
+      //   privateKey
+      // );
+
+      //====================================================================
+      // generate pub and private key
+      const { publicKey, privateKey } = generateKeyPair();
+
+      const tokens = await createTokensPair(
         { userId: newShop._id, email },
-        publicKeyObject,
+        publicKey,
         privateKey
       );
       console.log(`Created Token Success::`, tokens);
+
+      const publicKeyString = await KeyService.createKey({
+        userId: newShop._id,
+        publicKey,
+        privateKey,
+        refeshToken: tokens.refeshToken,
+      });
+
       return {
         code: 201,
         metadata: {

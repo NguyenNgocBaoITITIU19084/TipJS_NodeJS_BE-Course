@@ -1,6 +1,12 @@
 "use strict";
 
+// packages
 const jwt = require("jsonwebtoken");
+
+// files
+const { asyncHandler } = require("../helper/asyncHandler");
+const { HEADER } = require("../contants/header");
+const { UnAuthorizedError } = require("../core/error.response");
 
 const createTokenPairRSA = async (payload, publicKey, privateKey) => {
   try {
@@ -46,7 +52,21 @@ const createTokensPair = async (payload, publicKey, privateKey) => {
   }
 };
 
+const authentication = asyncHandler(async (req, res, next) => {
+  /*
+    1 - check userId on header is missing or not ?
+    2 - query keyStore with userId
+    3 - get accessToken on headers
+    4 - compare accessToken with keyStore
+    5 - verify token 
+    6 - return OK
+  */
+
+  const userId = req.headers[HEADER.CLIEND_ID]?.toString();
+  if (!userId) throw new UnAuthorizedError("Invalid request");
+});
 module.exports = {
   createTokensPair,
   createTokenPairRSA,
+  authentication,
 };
