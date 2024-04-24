@@ -14,6 +14,7 @@ router.get("/shop/login", asyncHandler(accessController.login));
 // Authentication
 router.use(authentication);
 ///////////////////////////////
+router.get("/shop/logout", asyncHandler(accessController.logout));
 
 router.get(
   "/test",

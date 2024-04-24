@@ -10,7 +10,7 @@ const HEADER = {
 const apiKey = async (req, res, next) => {
   try {
     const key = req.headers[HEADER.API_KEY]?.toString();
-    console.log("key", key);
+    // console.log("key", key);
     if (!key) {
       return res.json({ message: "Forbidden" });
     }
@@ -19,7 +19,7 @@ const apiKey = async (req, res, next) => {
       return res.json({ message: "Forbidden" });
     }
 
-    console.log("key::", keyObject);
+    // console.log("key::", keyObject);
     req.keyObject = keyObject;
     return next();
   } catch (error) {}

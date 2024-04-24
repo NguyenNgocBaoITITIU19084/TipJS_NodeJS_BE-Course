@@ -41,8 +41,15 @@ class KeyService {
       return error;
     }
   };
+
   static findByUserId = async (userId) => {
     return await keyTokenModel.findOne({ user: userId }).lean();
+  };
+
+  static removeByUserId = async (id) => {
+    return await keyTokenModel
+      .findOneAndDelete({ user: id }, { new: true })
+      .lean();
   };
 }
 module.exports = KeyService;

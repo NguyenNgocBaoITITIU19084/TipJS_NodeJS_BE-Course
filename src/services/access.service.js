@@ -17,14 +17,20 @@ const KeyService = require("./key.service");
 const { findByEmail } = require("../services/shop.service");
 
 class AccessService {
-  /*
+  static logout = async (keyObject) => {
+    console.log("keyObject", keyObject);
+    const removeKey = await KeyService.removeByUserId(keyObject.user);
+    return removeKey;
+  };
+
+  static login = async ({ email, password, refeshToken = null }) => {
+    /*
     Flow of Login Function:
       1 - checking email in db 
       2 - matching password
       3 - create AT , RT
       4 - return data
   */
-  static login = async ({ email, password, refeshToken = null }) => {
     const foundedShop = await findByEmail({ email });
     if (!foundedShop) throw new BadRequestError("Shop is not registed");
 
