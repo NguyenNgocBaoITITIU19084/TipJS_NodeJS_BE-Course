@@ -60,4 +60,5 @@ module.exports = {
   ConflictError,
   BadRequestError,
   UnAuthorizedError,
+  NotFoundError,
 };
