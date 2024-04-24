@@ -78,6 +78,8 @@ class AccessService {
         publicKey,
       });
 
+      console.log("publicKeyString", publicKeyString);
+
       if (!publicKeyString) {
         return {
           code: "xxx",

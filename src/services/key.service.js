@@ -9,6 +9,8 @@ class KeyService {
       const tokens = await keyTokenModel.create({
         user: userId,
         publicKey: publicKeyString,
+        privateKey: "123",
+        refeshToken: "123",
       });
       return tokens ? tokens.publicKey : null;
     } catch (error) {
